@@ -2,86 +2,9 @@ include: package:very_good_analysis/analysis_options.yaml
 
 analyzer:
   exclude: [build/**]
-  plugins:
-    - dart_code_metrics
 
 linter:
   rules:
     prefer_relative_imports: true
     always_use_package_imports: false
     one_member_abstracts: false
-
-dart_code_metrics:
-  extends:
-    - package:dart_code_metrics_presets/all.yaml
-  metrics:
-    cyclomatic-complexity: 20
-    halstead-volume: 150
-    lines-of-code: 100
-    maintainability-index: 50
-    maximum-nesting-level: 5
-    number-of-methods: 10
-    number-of-parameters: 4
-    source-lines-of-code: 50
-    technical-debt:
-      threshold: 1
-      todo-cost: 161
-      ignore-cost: 320
-      ignore-for-file-cost: 396
-      as-dynamic-cost: 322
-      deprecated-annotations-cost: 37
-      file-nullsafety-migration-cost: 41
-      unit-type: "USD"
-    weight-of-class: 0.33
-  anti-patterns:
-    - long-method
-    - long-parameter-list
-  metrics-exclude:
-    - test/**
-  rules:
-    - no-equal-arguments: false
-    - avoid-passing-async-when-sync-expected
-    - avoid-redundant-async
-    - avoid-unnecessary-type-assertions
-    - avoid-unnecessary-type-casts
-    - avoid-unrelated-type-assertions
-    - avoid-unused-parameters
-    - avoid-nested-conditional-expressions
-    - newline-before-return
-    - no-boolean-literal-compare
-    - no-empty-block
-    - prefer-trailing-comma
-    - prefer-conditional-expressions
-    - no-equal-then-else
-    - prefer-moving-to-variable
-    - avoid-late-keyword: false
-    - avoid-dynamic: false
-    - avoid-ignoring-return-values: false
-    - prefer-static-class: false
-    - arguments-ordering: false
-    - prefer-extracting-callbacks: false
-    - avoid-top-level-members-in-tests: false
-    - prefer-match-file-name:
-        exclude:
-          - test/**
-    - prefer-correct-identifier-length:
-        exceptions: [ 'id' ]
-    - member-ordering:
-        order:
-          - constructors
-          - named-constructor
-          - private-fields
-          - public-fields
-          - private-methods
-          - public-methods
-        widgets-order:
-          - constructor
-          - private-fields
-          - public-fields
-          - init-state-method
-          - dispose-method
-          - did-change-dependencies-method
-          - did-update-widget-method
-          - private-methods
-          - build-method
-          - public-methods

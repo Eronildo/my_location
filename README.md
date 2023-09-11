@@ -117,7 +117,6 @@ This file can be used by a code analyzer (SonarQube, CodeCov, etc.) to define th
 - [get_it](https://pub.dev/packages/get_it)
 - [google_maps_flutter](https://pub.dev/packages/google_maps_flutter)
 - [intl](https://pub.dev/packages/intl)
-- [dart_code_metrics](https://pub.dev/packages/dart_code_metrics)
 - [http_mock_adapter](https://pub.dev/packages/http_mock_adapter)
 - [mocktail](https://pub.dev/packages/mocktail)
 - [very_good_analysis](https://pub.dev/packages/very_good_analysis)
@@ -221,19 +220,13 @@ Made by the Dart team itself and used by the entire community.
 intl_utils
 
 ___________________________________________________________________________
-### **dart_code_metrics**
-
-**Why I chose:**
-Contains a great lint, metrics, rules, anti-patterns, increasing code quality, despite the discontinuation of the package.
-
-**Other options:**
-flutter_lint, lints
-
-___________________________________________________________________________
 ### **dart-define-from-file command**
 
 **Why I chose:**
 By assigning the project's sensitive variables and keys in a single file, there is no need to store them in the git repository, they will be encrypted together with the project code.
+
+**Other options:**
+dotenv e envied
 
 ___________________________________________________________________________
 ### **http_mock_adapter**
@@ -261,9 +254,6 @@ Great linter maintained by a large company specializing in flutter and dart.
 
 **Other options:**
 flutter_lint, lints
-
-**Other options:**
-dotenv e envied
 
 ## Patterns and Techniques
 
