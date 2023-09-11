@@ -1,0 +1,6 @@
+{
+    "noConnection": "No connection",
+    "connectionEstablished": "Connection established",
+    "offline": "You are offline!",
+    "approximateLocation": "This is your approximate location."
+}

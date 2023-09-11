@@ -1,0 +1,34 @@
+name: my_location
+description: A Flutter project to show my location on the map.
+publish_to: 'none'
+version: 1.0.0
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+
+dependencies:
+  dio: ^5.3.2
+  dson_adapter: ^1.2.0+2
+  equatable: ^2.0.5
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  geolocator: ^10.0.1
+  get_it: ^7.6.4
+  google_maps_flutter: ^2.5.0
+  intl: any
+
+dev_dependencies:
+  dart_code_metrics: ^5.7.6
+  flutter_test:
+    sdk: flutter
+  http_mock_adapter: ^0.6.0
+  mocktail: ^1.0.0
+  very_good_analysis: ^5.1.0
+
+flutter:
+  uses-material-design: true
+
+  # Enable generation of localized Strings from arb files.
+  generate: true
