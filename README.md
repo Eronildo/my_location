@@ -291,3 +291,26 @@ https://en.wikipedia.org/wiki/Mock_object
 
 TDD:
 https://www.browserstack.com/guide/what-is-test-driven-development
+
+## Application Deployment
+
+To deploy automatically, you can use CI and CD services, examples in the cloud: Azure DevOps, GitHub Actions or CodeMagic or locally with Fast Lane.
+
+For a simpler project, I recommend using the CodeMagic service, due to its ease and speed in configuration, on the other hand, if it is a more complex business project, I recommend building the pipelines directly with the most popular services such as Azure DevOps or GitHub Actions by its number of features and integrations.
+
+You will need to sign the project for publication.
+
+To deploy manually, follow the steps on the flutter website:
+- [Android Deploy](https://docs.flutter.dev/deployment/android)
+- [iOS Deploy](https://docs.flutter.dev/deployment/ios)
+
+To create a release via the flutter command, in the project root, run:
+
+- Build AppBundle For Android:
+`flutter build appbundle --dart-define-from-file=.env --release --obfuscate --split-debug-info=./build/debug-info`
+
+- Build IPA for iOS:
+`flutter build ipa --dart-define-from-file=.env --release --obfuscate --split-debug-info=./build/debug-info --export-options-plist ios/Runner/export.plist`
+
+To build via continuous delivery, follow the instructions on the flutter website:
+[Continuos Delivery](https://docs.flutter.dev/deployment/cd)
