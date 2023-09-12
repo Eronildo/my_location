@@ -146,7 +146,7 @@ Ease of learning (Noob Friendly), solves communication problems between states a
 Riverpod, BLoC, MobX, etc..
 
 ___________________________________________________________________________
-## **Pacotes:**
+## **Plugins / Packages:**
 
 ### **dio**
 
