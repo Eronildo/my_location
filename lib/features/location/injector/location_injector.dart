@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 
 import '../../../core/adapters/http/http_adapter.dart';
+import '../../../core/adapters/local_storage/local_storage_adapter.dart';
 import '../../../core/adapters/location/location_adapter.dart';
 import '../../../core/adapters/network/network_adapter.dart';
 import '../../../core/services/location_service.dart';
@@ -20,6 +21,7 @@ void setupLocationInjector() {
       LocationRepository(
         httpAdapter: getIt<HttpAdapter>(),
         networkAdapter: getIt<NetworkAdapter>(),
+        localStorageAdapter: getIt<LocalStorageAdapter>(),
       ),
     )
     ..registerSingleton<LocationReducer>(
