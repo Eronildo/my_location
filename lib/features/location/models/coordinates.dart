@@ -43,6 +43,12 @@ class Coordinates extends Equatable {
   /// The longitude of [Coordinates].
   final double longitude;
 
+  /// Serialize [Coordinates] in a Map object.
+  Map<String, dynamic> toMap() => {
+        'lat': latitude,
+        'lon': longitude,
+      };
+
   @override
   List<Object?> get props => [latitude, longitude];
 }
