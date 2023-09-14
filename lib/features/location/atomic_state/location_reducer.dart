@@ -6,6 +6,8 @@ import '../../../core/extensions/result_extension.dart';
 import '../../../core/services/location_service.dart';
 import '../../../core/utils/atomic_state/reducer.dart';
 import '../models/coordinates.dart';
+import '../models/location_history.dart';
+import '../models/location_history_list.dart';
 import '../repository/location_repository.dart';
 import 'location_atoms.dart';
 
@@ -22,6 +24,7 @@ class LocationReducer extends Reducer {
   })  : _locationRepository = locationRepository,
         _locationService = locationService {
     on(getMyLocationAction, _getMyLocation);
+    on(loadLocationHistoryListAction, _loadLocationHistoryList);
   }
 
   /// Location Service to retrive [Coordinates] via GPS.
@@ -39,37 +42,83 @@ class LocationReducer extends Reducer {
           locationExceptionState.setValue,
           (coordinates) {
             locationExceptionState.setValue(failure);
-            _updateGoogleMap(coordinates);
+            _saveLocationHistoryAndUpdateLocationOnMap(coordinates);
           },
         );
       },
-      _updateGoogleMap,
+      _saveLocationHistoryAndUpdateLocationOnMap,
     );
   }
 
-  Future<void> _updateGoogleMap(Coordinates coordinates) async {
+  FutureOr<void> _loadLocationHistoryList(_) {
+    final locationHistoryList = _locationRepository.getLocationHistoryList();
+    locationHistoryListState.setValue(locationHistoryList);
+  }
+
+  Future<void> _saveLocationHistoryAndUpdateLocationOnMap(
+    Coordinates coordinates,
+  ) async {
     if (!coordinates.isEmpty) {
-      final latLng = LatLng(
+      _saveLocationHistory(coordinates);
+      final latLng = _createLatLngFromCoordinates(coordinates);
+      _setLocationPinOnMap(latLng);
+      await _goToLocationOnMap(latLng);
+    }
+  }
+
+  LatLng _createLatLngFromCoordinates(Coordinates coordinates) => LatLng(
         coordinates.latitude,
         coordinates.longitude,
       );
 
-      googleMapMarkersState.setValue({
-        Marker(
-          markerId: const MarkerId('user'),
-          position: latLng,
-        ),
-      });
+  void _setLocationPinOnMap(LatLng latLng) {
+    googleMapMarkersState.setValue({
+      Marker(
+        markerId: const MarkerId('user'),
+        position: latLng,
+      ),
+    });
+  }
 
-      final googleMapController = await googleMapCompleterState.value.future;
-      await googleMapController.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-            target: latLng,
-            zoom: _googleMapCameraPositionZoom,
-          ),
+  Future<void> _goToLocationOnMap(LatLng latLng) async {
+    final googleMapController = await googleMapCompleterState.value.future;
+    await googleMapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: latLng,
+          zoom: _googleMapCameraPositionZoom,
         ),
-      );
+      ),
+    );
+  }
+
+  void _saveLocationHistory(Coordinates coordinates) {
+    final locationHistory = LocationHistory.fromCoordinates(coordinates);
+
+    final (isLocationAdded, newLocationHistoryList) =
+        _tryAddLocationHistory(locationHistory);
+
+    if (isLocationAdded) {
+      _locationRepository.saveLocationHistoryList(newLocationHistoryList);
+      locationHistoryListState.setValue(newLocationHistoryList);
     }
+  }
+
+  (bool isLocationAdded, LocationHistoryList locationHistoryList)
+      _tryAddLocationHistory(
+    LocationHistory locationHistory,
+  ) {
+    final locationHistoryList = locationHistoryListState.value;
+    final locationHistories = locationHistoryList.locationHistories;
+    final containsLocationHistory = locationHistories.contains(locationHistory);
+    if (!containsLocationHistory) {
+      final newHistories = <LocationHistory>[
+        ...locationHistories,
+        locationHistory,
+      ];
+      return (true, LocationHistoryList(locationHistories: newHistories));
+    }
+
+    return (false, locationHistoryList);
   }
 }

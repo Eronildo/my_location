@@ -10,6 +10,8 @@ import 'package:my_location/core/utils/result.dart';
 import 'package:my_location/features/location/atomic_state/location_atoms.dart';
 import 'package:my_location/features/location/atomic_state/location_reducer.dart';
 import 'package:my_location/features/location/models/coordinates.dart';
+import 'package:my_location/features/location/models/location_history.dart';
+import 'package:my_location/features/location/models/location_history_list.dart';
 import 'package:my_location/features/location/repository/location_repository.dart';
 
 class MockLocationService extends Mock implements LocationService {}
@@ -28,6 +30,15 @@ void main() {
 
   const mockCoordinates = Coordinates(latitude: 1, longitude: 1);
 
+  final mockLocationHistoryList = LocationHistoryList(
+    locationHistories: [
+      LocationHistory(
+        historyDate: DateTime.now(),
+        coordinates: mockCoordinates,
+      ),
+    ],
+  );
+
   setUpAll(() {
     mockLocationService = MockLocationService();
     mockLocationRepository = MockLocationRepository();
@@ -43,35 +54,106 @@ void main() {
 
   tearDownAll(() => locationReducer.dispose());
 
-  test(
-    'given gps location when getMyLocationAction be called set a google marker',
-    () {
+  group('get my location', () {
+    test(
+      'given gps location when getMyLocationAction be called should set a pin',
+      () {
+        // Arrange:
+        when(() => mockLocationService.getCoordinatesByGPS()).thenAnswer(
+          (_) async => Success(mockCoordinates),
+        );
+        when(() => mockGoogleMapController.animateCamera(any()))
+            .thenAnswer((_) async => {});
+
+        // Act:
+        final completer = Completer<MockGoogleMapController>();
+        googleMapCompleterState.setValue(completer);
+        completer.complete(mockGoogleMapController);
+        getMyLocationAction();
+
+        // Assert:
+        Future.delayed(
+          Duration.zero,
+          () => expect(googleMapMarkersState.value, isNotEmpty),
+        );
+      },
+    );
+
+    test(
+      'given no gps location and http success when getMyLocationAction be '
+      'called should set a pin and set a location exception',
+      () {
+        // Arrange:
+        when(() => mockLocationService.getCoordinatesByGPS()).thenAnswer(
+          (_) async => Failure(LocationUnavailableException()),
+        );
+        when(() => mockLocationRepository.getCoordinatesByHttp()).thenAnswer(
+          (_) async => Success(mockCoordinates),
+        );
+
+        // Act:
+        getMyLocationAction();
+
+        // Assert:
+        Future.delayed(
+          Duration.zero,
+          () {
+            expect(googleMapMarkersState.value, isNotEmpty);
+            expect(
+              locationExceptionState.value,
+              LocationUnavailableException(),
+            );
+          },
+        );
+      },
+    );
+
+    test(
+      'given no gps location and no connection when getMyLocationAction be '
+      'called should set a location exception NoInternetException',
+      () {
+        // Arrange:
+        when(() => mockLocationService.getCoordinatesByGPS()).thenAnswer(
+          (_) async => Failure(LocationUnavailableException()),
+        );
+        when(() => mockLocationRepository.getCoordinatesByHttp()).thenAnswer(
+          (_) async => Failure(NoInternetException()),
+        );
+
+        // Act:
+        getMyLocationAction();
+
+        // Assert:
+        Future.delayed(
+          Duration.zero,
+          () {
+            expect(locationExceptionState.value, NoInternetException());
+          },
+        );
+      },
+    );
+  });
+
+  group('location history list', () {
+    test(
+        'given a location history list when load location be called '
+        'should update the state', () {
       // Arrange:
-      when(() => mockLocationService.getCoordinatesByGPS()).thenAnswer(
-        (_) async => Success(mockCoordinates),
-      );
-      when(() => mockGoogleMapController.animateCamera(any()))
-          .thenAnswer((_) async => {});
+      when(() => mockLocationRepository.getLocationHistoryList())
+          .thenReturn(mockLocationHistoryList);
 
       // Act:
-      final completer = Completer<MockGoogleMapController>();
-      googleMapCompleterState.setValue(completer);
-      completer.complete(mockGoogleMapController);
-      getMyLocationAction();
+      loadLocationHistoryListAction();
 
       // Assert:
-      Future.delayed(
-        Duration.zero,
-        () => expect(googleMapMarkersState.value, isNotEmpty),
-      );
-    },
-  );
+      expect(locationHistoryListState.value, mockLocationHistoryList);
+    });
 
-  test(
-    'given no gps location and http success when getMyLocationAction be called '
-    'set a google marker and set a location exception',
-    () {
+    test(
+        'given the same location aready in the list when update location be '
+        'called should not save or add the data', () {
       // Arrange:
+      locationHistoryListState.setValue(mockLocationHistoryList);
       when(() => mockLocationService.getCoordinatesByGPS()).thenAnswer(
         (_) async => Failure(LocationUnavailableException()),
       );
@@ -86,35 +168,9 @@ void main() {
       Future.delayed(
         Duration.zero,
         () {
-          expect(googleMapMarkersState.value, isNotEmpty);
-          expect(locationExceptionState.value, LocationUnavailableException());
+          expect(locationHistoryListState.value.locationHistories.length, 1);
         },
       );
-    },
-  );
-
-  test(
-    'given no gps location and no connection when getMyLocationAction be called'
-    ' set a location exception NoInternetException',
-    () {
-      // Arrange:
-      when(() => mockLocationService.getCoordinatesByGPS()).thenAnswer(
-        (_) async => Failure(LocationUnavailableException()),
-      );
-      when(() => mockLocationRepository.getCoordinatesByHttp()).thenAnswer(
-        (_) async => Failure(NoInternetException()),
-      );
-
-      // Act:
-      getMyLocationAction();
-
-      // Assert:
-      Future.delayed(
-        Duration.zero,
-        () {
-          expect(locationExceptionState.value, NoInternetException());
-        },
-      );
-    },
-  );
+    });
+  });
 }

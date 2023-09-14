@@ -14,6 +14,10 @@ class LocationHistory extends Equatable {
     required this.coordinates,
   });
 
+  /// Create [LocationHistory] from [Coordinates].
+  factory LocationHistory.fromCoordinates(Coordinates coordinates) =>
+      LocationHistory(historyDate: DateTime.now(), coordinates: coordinates);
+
   /// [DateTime] of [LocationHistory].
   final DateTime historyDate;
 
