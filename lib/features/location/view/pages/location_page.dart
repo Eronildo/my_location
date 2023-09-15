@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/extensions/build_context_extension.dart';
+import '../../../../core/widgets/buttons/custom_button.dart';
+import '../../atomic_state/location_atoms.dart';
 import '../../controller/location_controller.dart';
 import '../widgets/connection_status_widget.dart';
 import '../widgets/google_map_widget.dart';
@@ -18,12 +21,31 @@ class LocationPage extends StatefulWidget {
 class _LocationPageState extends State<LocationPage> with LocationController {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Stack(
         children: [
-          GoogleMapWidget(),
-          ConnectionStatusWidget(),
+          const GoogleMapWidget(),
+          const ConnectionStatusWidget(),
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: CustomButton(
+                  onPressed: getMyLocationAction.call,
+                  iconData: Icons.gps_fixed,
+                ),
+              ),
+            ),
+          ),
         ],
+      ),
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterDocked,
+      floatingActionButton: CustomButton(
+        onPressed: showLocationHistoryList,
+        iconData: Icons.history,
+        label: context.i18n.lastLocations,
       ),
     );
   }

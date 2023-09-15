@@ -1,6 +1,8 @@
 {
-    "noConnection": "Sin conexión",
+    "approximateLocation": "Esta es su ubicación aproximada.",
+    "close": "Cerrar",
     "connectionEstablished": "Conexión establecida",
-    "offline": "¡Estas desconectado!",
-    "approximateLocation": "Esta es su ubicación aproximada."
+    "lastLocations": "Últimas ubicaciones",
+    "noConnection": "Sin conexión",
+    "offline": "¡Estas desconectado!"
 }

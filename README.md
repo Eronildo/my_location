@@ -40,7 +40,7 @@ In this case the API_URL should be 'http://ip-api.com'
 and for more information about create a Google Maps API Key, visit:
 - https://pub.dev/packages/google_maps_flutter#getting-started
 
-2. Run the `flutter pub get` command to download the dependencies and create the internationalization files.
+2. Run the `flutter pub get` command to download the dependencies and create the internationalization files, any updates in i10n arb files must run this command to update app localization generated files in .dart_tool/flutter_gen.
 3. Run the command `flutter run --dart-define-from-file=.env` to run the application or use 'Start Debugging (F5)' from the 'Run and Debug' tab of Visual Studio Code if you are using it.
 
 ## Architecture
@@ -110,13 +110,13 @@ This file can be used by a code analyzer (SonarQube, CodeCov, etc.) to define th
 
 ## Plugins and packages used
 - [dio](https://pub.dev/packages/dio)
-- [dson_adapter](https://pub.dev/packages/dson_adapter)
 - [equatable](https://pub.dev/packages/equatable)
 - [flutter_localizations](https://docs.flutter.dev/ui/accessibility-and-localization/internationalization)
 - [geolocator](https://pub.dev/packages/geolocator)
 - [get_it](https://pub.dev/packages/get_it)
 - [google_maps_flutter](https://pub.dev/packages/google_maps_flutter)
 - [intl](https://pub.dev/packages/intl)
+- [shared_preferences](https://pub.dev/packages/shared_preferences)
 - [http_mock_adapter](https://pub.dev/packages/http_mock_adapter)
 - [mocktail](https://pub.dev/packages/mocktail)
 - [very_good_analysis](https://pub.dev/packages/very_good_analysis)
@@ -218,6 +218,15 @@ Made by the Dart team itself and used by the entire community.
 
 **Other options:**
 intl_utils
+
+___________________________________________________________________________
+### **shared_preferences**
+
+**Why I chose:**
+Made by the Flutter team, very popular and easy to use.
+
+**Other options:**
+hive, sqlite, moor
 
 ___________________________________________________________________________
 ### **dart-define-from-file command**

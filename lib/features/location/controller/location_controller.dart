@@ -6,12 +6,12 @@ import '../../../core/exceptions/location_exception.dart';
 import '../../../core/extensions/build_context_extension.dart';
 import '../atomic_state/location_atoms.dart';
 import '../view/pages/location_page.dart';
+import '../view/widgets/location_history/location_history_modal/location_history_modal_widget.dart';
 
 /// A mixin to LocationPage State
 ///
 /// All stuffs related a [initState], listeners, [SnackBar], [Dialog]s, etc.
 mixin LocationController on State<LocationPage> {
-
   @override
   void initState() {
     super.initState();
@@ -49,15 +49,24 @@ mixin LocationController on State<LocationPage> {
       errorMessage = context.i18n.noConnection;
     } else if (locationException is LocationException) {
       errorMessage = context.i18n.approximateLocation;
+    } else if (locationException is HttpException) {
+      errorMessage = locationException.message ?? '';
     }
 
     _showSnackbar(message: errorMessage);
   }
 
-  void _showSnackbar({required String message}) =>
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-        ),
+  void _showSnackbar({required String message}) {
+    if (message != '') {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
+    }
+  }
+
+  /// Show a BottomSheet Modal with Locations History List Widget.
+  void showLocationHistoryList() => showModalBottomSheet<void>(
+        backgroundColor: Colors.transparent,
+        context: context,
+        builder: (_) => const LocationHistoryModalWidget(),
       );
 }
