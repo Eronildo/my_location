@@ -1,8 +1,9 @@
-import 'package:dson_adapter/dson_adapter.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
 const _emptyCoordinates = Coordinates(latitude: 0, longitude: 0);
+const _latMapKey = 'lat';
+const _lonMapKey = 'lon';
 
 /// [Coordinates] model
 ///
@@ -15,20 +16,20 @@ class Coordinates extends Equatable {
     required this.longitude,
   });
 
-  /// Create [Coordinates] model with [DSON] plugin from a Json Map
-  ///
-  /// See https://pub.dev/packages/dson_adapter.
-  factory Coordinates.fromJson(Map<String, dynamic> map) {
-    return const DSON().fromJson(
-      map,
-      Coordinates.new,
-      aliases: {
-        Coordinates: {
-          'latitude': 'lat',
-          'longitude': 'lon',
-        },
-      },
-    );
+  /// Create [Coordinates] model from [Map].
+  factory Coordinates.fromMap(Map<String, dynamic> map) {
+    if (!map.containsKey(_latMapKey) || !map.containsKey(_lonMapKey)) {
+      return Coordinates.empty();
+    }
+
+    final lat = map[_latMapKey];
+    final lon = map[_lonMapKey];
+
+    if (lat is! double || lon is! double) {
+      return Coordinates.empty();
+    }
+
+    return Coordinates(latitude: lat, longitude: lon);
   }
 
   /// Create empty [Coordinates].
@@ -45,8 +46,8 @@ class Coordinates extends Equatable {
 
   /// Serialize [Coordinates] in a Map object.
   Map<String, dynamic> toMap() => {
-        'lat': latitude,
-        'lon': longitude,
+        _latMapKey: latitude,
+        _lonMapKey: longitude,
       };
 
   @override

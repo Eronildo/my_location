@@ -1,14 +1,13 @@
 name: my_location
 description: A Flutter project to show my location on the map.
 publish_to: 'none'
-version: 1.0.0
+version: 1.0.0+3
 
 environment:
   sdk: '>=3.1.0 <4.0.0'
 
 dependencies:
   dio: ^5.3.2
-  dson_adapter: ^1.2.0+2
   equatable: ^2.0.5
   flutter:
     sdk: flutter
