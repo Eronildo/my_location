@@ -25,6 +25,7 @@ class LocationReducer extends Reducer {
         _locationService = locationService {
     on(getMyLocationAction, _getMyLocation);
     on(loadLocationHistoryListAction, _loadLocationHistoryList);
+    on(goToLocationAction, _goToCoordinatesAndPinOnMap);
   }
 
   /// Location Service to retrive [Coordinates] via GPS.
@@ -55,14 +56,18 @@ class LocationReducer extends Reducer {
     locationHistoryListState.setValue(locationHistoryList);
   }
 
+  FutureOr<void> _goToCoordinatesAndPinOnMap(Coordinates coordinates) async {
+    final latLng = _createLatLngFromCoordinates(coordinates);
+    _setLocationPinOnMap(latLng);
+    await _goToLocationOnMap(latLng);
+  }
+
   Future<void> _saveLocationHistoryAndUpdateLocationOnMap(
     Coordinates coordinates,
   ) async {
     if (!coordinates.isEmpty) {
       _saveLocationHistory(coordinates);
-      final latLng = _createLatLngFromCoordinates(coordinates);
-      _setLocationPinOnMap(latLng);
-      await _goToLocationOnMap(latLng);
+      await _goToCoordinatesAndPinOnMap(coordinates);
     }
   }
 
@@ -115,7 +120,7 @@ class LocationReducer extends Reducer {
       final newHistories = <LocationHistory>[
         ...locationHistories,
         locationHistory,
-      ];
+      ]..sort((a, b) => b.historyDate.compareTo(a.historyDate));
       return (true, LocationHistoryList(locationHistories: newHistories));
     }
 

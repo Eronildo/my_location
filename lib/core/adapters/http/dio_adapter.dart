@@ -34,8 +34,8 @@ class DioAdapter implements HttpAdapter {
 
   @override
   Map<String, String> baseHeaders = {
-    HttpHeaders.acceptHeader: ContentType.json.value,
-    HttpHeaders.contentTypeHeader: ContentType.json.value,
+    HttpHeaders.acceptHeader: Headers.jsonContentType,
+    HttpHeaders.contentTypeHeader: Headers.jsonContentType,
   };
 
   @override

@@ -5,6 +5,6 @@ sealed class Environment {
   /// Base API URL from environment file.
   static const apiUrl = String.fromEnvironment(
     'API_URL',
-    defaultValue: 'https://google.com',
+    defaultValue: 'http://google.com',
   );
 }

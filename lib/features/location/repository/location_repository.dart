@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:dson_adapter/dson_adapter.dart';
 
 import '../../../core/adapters/http/http_adapter.dart';
 import '../../../core/adapters/local_storage/local_storage_adapter.dart';
@@ -42,12 +41,10 @@ class LocationRepository {
           queryParameters: {_apiQueryParamsKey: _apiQueryParamsValue},
         );
 
-        return Success(Coordinates.fromJson(response.data));
+        return Success(Coordinates.fromMap(response.data));
       } on HttpException catch (e) {
         return Failure(e);
       } on DioException catch (e, s) {
-        return Failure(HttpException(message: e.message, stackTrace: s));
-      } on DSONException catch (e, s) {
         return Failure(HttpException(message: e.message, stackTrace: s));
       }
     } else {
@@ -73,7 +70,7 @@ class LocationRepository {
     if (locationHistoryListMap == null) return LocationHistoryList.empty();
 
     final locationHistoryList =
-        LocationHistoryList.fromJson(locationHistoryListMap);
+        LocationHistoryList.fromMap(locationHistoryListMap);
 
     return locationHistoryList;
   }

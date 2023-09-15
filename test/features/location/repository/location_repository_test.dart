@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:dson_adapter/dson_adapter.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:my_location/core/adapters/http/http_adapter.dart';
@@ -147,33 +146,6 @@ void main() {
           expect(
             result.tryGetFailure(),
             HttpException(),
-          );
-        },
-      );
-
-      test(
-        'given connectivity but http throws exception when get coordinates '
-        'be called should return a failure result with DSONException',
-        () async {
-          // Arrange:
-          const errorMessage = 'error_message';
-          when(
-            () => mockHttpAdapter.get<ResponseMapType>(
-              any(),
-              queryParameters: any(
-                named: 'queryParameters',
-              ),
-            ),
-          ).thenThrow(DSONException(errorMessage));
-
-          // Act:
-          final result = await locationRepository.getCoordinatesByHttp();
-
-          // Assert:
-          expect(result.isFailure(), isTrue);
-          expect(
-            result.tryGetFailure(),
-            HttpException(message: errorMessage),
           );
         },
       );

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../core/utils/atomic_state/atom.dart';
+import '../models/coordinates.dart';
 import '../models/location_history_list.dart';
 
 // Atoms:
@@ -26,3 +27,6 @@ final getMyLocationAction = Atom.action();
 
 /// Action to load all location histories from local storage.
 final loadLocationHistoryListAction = Atom.action();
+
+/// Action for go to location and that pin on map.
+final goToLocationAction = Atom<Coordinates>(Coordinates.empty());
