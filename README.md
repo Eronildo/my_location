@@ -326,5 +326,13 @@ To create a release via the flutter command, in the project root, run:
 - Build IPA for iOS:
 `flutter build ipa --dart-define-from-file=.env --release --obfuscate --split-debug-info=./build/debug-info --export-options-plist ios/Runner/export.plist`
 
+For test the release on Android:
+
+- Build an APK:
+`flutter build apk --dart-define-from-file=.env --release --obfuscate --split-debug-info=./build/debug-info`
+
+- Run this command to install on divice or emulator:
+`flutter install`
+
 To build via continuous delivery, follow the instructions on the flutter website:
 [Continuos Delivery](https://docs.flutter.dev/deployment/cd)
