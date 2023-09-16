@@ -10,7 +10,7 @@ import '../view/widgets/location_history/location_history_modal/location_history
 
 /// A mixin to LocationPage State
 ///
-/// All stuffs related a [initState], listeners, [SnackBar], [Dialog]s, etc.
+/// All stuffs related a [BottomSheet], [SnackBar], [Dialog], etc.
 mixin LocationController on State<LocationPage> {
   @override
   void initState() {

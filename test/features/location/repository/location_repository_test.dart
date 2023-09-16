@@ -7,6 +7,8 @@ import 'package:my_location/core/adapters/network/network_adapter.dart';
 import 'package:my_location/core/exceptions/app_exception.dart';
 import 'package:my_location/core/extensions/result_extension.dart';
 import 'package:my_location/core/models/http_response.dart';
+import 'package:my_location/features/location/exceptions/location_feature_exception.dart';
+import 'package:my_location/features/location/mappers/location_history_list_mapper.dart';
 import 'package:my_location/features/location/models/coordinates.dart';
 import 'package:my_location/features/location/models/location_history.dart';
 import 'package:my_location/features/location/models/location_history_list.dart';
@@ -92,7 +94,7 @@ void main() {
           result.foldFailure(
             (failure) => expect(
               failure,
-              NoInternetException(),
+              isA<NoInternetException>(),
             ),
           );
         },
@@ -119,7 +121,7 @@ void main() {
           expect(result.isFailure(), isTrue);
           expect(
             result.tryGetFailure(),
-            HttpException(),
+            isA<HttpException>(),
           );
         },
       );
@@ -145,7 +147,67 @@ void main() {
           expect(result.isFailure(), isTrue);
           expect(
             result.tryGetFailure(),
-            HttpException(),
+            isA<HttpException>(),
+          );
+        },
+      );
+
+      test(
+        'given wrong response data without lon key when getCoordinatesByHttp '
+        'be called should return a failure result with NoKeyException',
+        () async {
+          // Arrange:
+          when(
+            () => mockHttpAdapter.get<ResponseMapType>(
+              any(),
+              queryParameters: any(
+                named: 'queryParameters',
+              ),
+            ),
+          ).thenAnswer(
+            (_) async => HttpResponse(data: {'lat': 1.0}),
+          );
+
+          // Act:
+          final result = await locationRepository.getCoordinatesByHttp();
+
+          // Assert:
+          expect(result.isFailure(), isTrue);
+          final failure = result.tryGetFailure();
+          expect(failure, isA<MapperException>());
+          expect(failure, NoKeyException(mapKey: 'lon'));
+        },
+      );
+
+      test(
+        'given wrong value type in lat key when getCoordinatesByHttp '
+        'be called should return a failure result with NoKeyException',
+        () async {
+          // Arrange:
+          when(
+            () => mockHttpAdapter.get<ResponseMapType>(
+              any(),
+              queryParameters: any(
+                named: 'queryParameters',
+              ),
+            ),
+          ).thenAnswer(
+            (_) async => HttpResponse(data: {'lat': '1.0', 'lon': 1.0}),
+          );
+
+          // Act:
+          final result = await locationRepository.getCoordinatesByHttp();
+
+          // Assert:
+          expect(result.isFailure(), isTrue);
+          final failure = result.tryGetFailure();
+          expect(failure, isA<MapperException>());
+          expect(
+            failure,
+            WrongMapTypeException(
+              mapKey: 'lat',
+              valueType: double,
+            ),
           );
         },
       );
@@ -162,7 +224,7 @@ void main() {
       verify(
         () => mockLocalStorageAdapter.save(
           locationHistoriesKey,
-          mockLocationHistoryList.toMap(),
+          LocationHistoryListMapper.toMap(mockLocationHistoryList),
         ),
       );
     });
@@ -170,8 +232,10 @@ void main() {
     test(
         'given a location history key when location be called should return a '
         'location history list', () {
-      when(() => mockLocalStorageAdapter.get(any()))
-          .thenAnswer((invocation) => mockLocationHistoryList.toMap());
+      when(() => mockLocalStorageAdapter.get(any())).thenAnswer(
+        (invocation) =>
+            LocationHistoryListMapper.toMap(mockLocationHistoryList),
+      );
 
       final locationHistoryList = locationRepository.getLocationHistoryList();
       verify(
