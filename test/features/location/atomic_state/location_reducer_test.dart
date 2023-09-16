@@ -9,6 +9,7 @@ import 'package:my_location/core/services/location_service.dart';
 import 'package:my_location/core/utils/result.dart';
 import 'package:my_location/features/location/atomic_state/location_atoms.dart';
 import 'package:my_location/features/location/atomic_state/location_reducer.dart';
+import 'package:my_location/features/location/exceptions/location_feature_exception.dart';
 import 'package:my_location/features/location/models/coordinates.dart';
 import 'package:my_location/features/location/models/location_history.dart';
 import 'package:my_location/features/location/models/location_history_list.dart';
@@ -117,7 +118,7 @@ void main() {
           (_) async => Failure(LocationUnavailableException()),
         );
         when(() => mockLocationRepository.getCoordinatesByHttp()).thenAnswer(
-          (_) async => Failure(NoInternetException()),
+          (_) async => Failure(LocationNoInternetException()),
         );
 
         // Act:
@@ -127,7 +128,7 @@ void main() {
         Future.delayed(
           Duration.zero,
           () {
-            expect(locationExceptionState.value, NoInternetException());
+            expect(locationExceptionState.value, isA<NoInternetException>());
           },
         );
       },

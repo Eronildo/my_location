@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../core/extensions/result_extension.dart';
 import '../../../core/services/location_service.dart';
 import '../../../core/utils/atomic_state/reducer.dart';
+import '../mappers/location_history_mapper.dart';
 import '../models/coordinates.dart';
 import '../models/location_history.dart';
 import '../models/location_history_list.dart';
@@ -98,7 +99,7 @@ class LocationReducer extends Reducer {
   }
 
   void _saveLocationHistory(Coordinates coordinates) {
-    final locationHistory = LocationHistory.fromCoordinates(coordinates);
+    final locationHistory = LocationHistoryMapper.fromCoordinates(coordinates);
 
     final (isLocationAdded, newLocationHistoryList) =
         _tryAddLocationHistory(locationHistory);

@@ -5,6 +5,9 @@ import '../../../core/adapters/local_storage/local_storage_adapter.dart';
 import '../../../core/adapters/network/network_adapter.dart';
 import '../../../core/exceptions/app_exception.dart';
 import '../../../core/utils/result.dart';
+import '../exceptions/location_feature_exception.dart';
+import '../mappers/coordinates_mapper.dart';
+import '../mappers/location_history_list_mapper.dart';
 import '../models/coordinates.dart';
 import '../models/location_history_list.dart';
 
@@ -33,7 +36,8 @@ class LocationRepository {
   final LocalStorageAdapter _localStorageAdapter;
 
   /// Get [Coordinates] by API via HTTP.
-  Future<Result<AppException, Coordinates>> getCoordinatesByHttp() async {
+  Future<Result<LocationFeatureException, Coordinates>>
+      getCoordinatesByHttp() async {
     if (await _networkAdapter.isConnected) {
       try {
         final response = await _httpAdapter.get<ResponseMapType>(
@@ -41,14 +45,28 @@ class LocationRepository {
           queryParameters: {_apiQueryParamsKey: _apiQueryParamsValue},
         );
 
-        return Success(Coordinates.fromMap(response.data));
+        return Success(CoordinatesMapper.fromMap(response.data));
       } on HttpException catch (e) {
-        return Failure(e);
+        return Failure(
+          LocationHttpException(
+            message: e.message,
+            stackTrace: e.stackTrace,
+            statusCode: e.statusCode,
+          ),
+        );
       } on DioException catch (e, s) {
-        return Failure(HttpException(message: e.message, stackTrace: s));
+        return Failure(
+          LocationHttpException(
+            message: e.message,
+            stackTrace: s,
+            statusCode: e.response?.statusCode,
+          ),
+        );
+      } on MapperException catch (e) {
+        return Failure(e);
       }
     } else {
-      return Failure(NoInternetException());
+      return Failure(LocationNoInternetException());
     }
   }
 
@@ -58,7 +76,7 @@ class LocationRepository {
   ) {
     _localStorageAdapter.save(
       locationHistoriesKey,
-      locationHistoryList.toMap(),
+      LocationHistoryListMapper.toMap(locationHistoryList),
     );
   }
 
@@ -69,9 +87,6 @@ class LocationRepository {
 
     if (locationHistoryListMap == null) return LocationHistoryList.empty();
 
-    final locationHistoryList =
-        LocationHistoryList.fromMap(locationHistoryListMap);
-
-    return locationHistoryList;
+    return LocationHistoryListMapper.fromMap(locationHistoryListMap);
   }
 }
