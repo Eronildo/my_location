@@ -1,5 +1,10 @@
 # My Location Project (Mobile)
 
+<p>
+<a href="https://play.google.com/store/apps/details?id=com.eronildocavalcanti.my_location"><img src="https://play-lh.googleusercontent.com/2zD9Gy6u7CHjBSaiti9qmCnA1llmkTzjonVeoxIJc3J2q1C3MsLaQ_weN2_VyTO7-RQ=w832-h470-rw" height="100" alt="My Location" /></a>
+<a href='https://play.google.com/store/apps/details?id=com.eronildocavalcanti.my_location&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' height="100"/></a>
+</p>
+
 ## Challenge
 
 Build an app for one platform (Android or iOS) to load the current location of the user in the map with and without the device's location feature.
